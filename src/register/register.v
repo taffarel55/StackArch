@@ -17,7 +17,8 @@ module register #(
     input wire clk,                         //! Clock pin
     input wire load,                        //! Load pin
     input wire rst,                         //! Reset pin
-    input wire inc                          //! Inc pin
+    input wire inc,                         //! Inc pin
+    input wire dec                          //! Dec pin
   );
 
   always @(posedge clk, posedge rst)
@@ -28,6 +29,8 @@ module register #(
       out <= in;
     else if(inc)
       out <= out + 1;
+    else if(dec)
+      out <= out - 1;
     else
       out <= out;
   end

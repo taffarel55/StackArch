@@ -8,7 +8,7 @@ module register_test;
 
   // Signals
   reg [DATA_SIZE-1:0] in_data;
-  reg clk, load, rst, inc;
+  reg clk, load, rst, inc, dec;
   wire [DATA_SIZE-1:0] out_data;
 
   // Instantiate the Register module
@@ -18,13 +18,14 @@ module register_test;
              .clk(clk),
              .load(load),
              .rst(rst),
-             .inc(inc)
+             .inc(inc),
+             .dec(dec)
            );
 
   task expect(input [DATA_SIZE-1:0] exp_out);
     begin
-      $display("At time %0d load=%b rst=%b inc=%b in=%d out=%d",
-               $time, load, rst, inc, in_data, out_data);
+      $display("At time %0d load=%b rst=%b inc=%b dec=%b in=%d out=%d",
+               $time, load, rst, inc, dec, in_data, out_data);
       if (out_data !== exp_out)
       begin
         $display("TEST FAILED");
@@ -54,6 +55,7 @@ module register_test;
     load = 0;       // Deactivate load signal
     rst = 0;        // Deactivate reset signal
     inc = 0;        // Deactivate increment signal
+    dec = 0;        // Deactivate decrement signal
 
     // Apply test cases
     #10 in_data = 8'h0A; // Load new data
@@ -66,6 +68,11 @@ module register_test;
     #10 inc = 1;                // Activate increment signal
     repeat(2) @(negedge clk);   // Wait increment
     expect(in_data + 1);        // Expect increment
+    #10 inc = 0;                // Deactivate increment signal
+
+    #10 dec = 1;                // Activate decrement signal
+    repeat(2) @(negedge clk);   // Wait increment
+    expect(in_data + 1);         // Expect increment
     #10 inc = 0;                // Deactivate increment signal
 
     #10 rst = 1;                // Activate reset signal
