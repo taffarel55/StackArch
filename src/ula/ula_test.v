@@ -8,11 +8,11 @@ module ula_test;
 
   //Ports
   wire [DATA_SIZE-1:0] out;
-  reg [DATA_SIZE-1:0] operand_a;
-  reg [DATA_SIZE-1:0] operand_b;
-  reg [3:0] opcode;
+  reg  [DATA_SIZE-1:0] operand_a;
+  reg  [DATA_SIZE-1:0] operand_b;
+  reg  [3:0] opcode;
 
-  localparam  ADD = 0;  //! A+B
+  localparam  ADD  = 0; //! A+B
   localparam  SUB  = 1; //! A-B
   localparam  MUL  = 2; //! A*B
   localparam  DIV  = 3; //! A/B
@@ -116,6 +116,7 @@ module ula_test;
     #1;
     expect(0);
 
+    $display("TESTS PASSED");
     $finish;
   end
 

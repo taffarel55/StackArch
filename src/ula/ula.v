@@ -16,8 +16,7 @@ module ula #(
     input wire [3:0] opcode                 //! Operand code
   );
 
-
-  localparam  ADD = 0;  //! A+B
+  localparam  ADD  = 0; //! A+B
   localparam  SUB  = 1; //! A-B
   localparam  MUL  = 2; //! A*B
   localparam  DIV  = 3; //! A/B
@@ -54,7 +53,7 @@ module ula #(
       NOT:
         out = !operand_a;
       default:
-        out = 11'bx;
+        out = {DATA_SIZE{1'bx}};
     endcase
   end
 
