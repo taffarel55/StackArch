@@ -1,6 +1,7 @@
 module fsm (
     input wire clk,
     input wire rst,
+    input wire [15:0] instruction_register,
 
     // Temp regs
     output reg rst_temp1,
@@ -21,9 +22,13 @@ module fsm (
     // RFLAGs
     output reg rst_flags,
 
-    // Data memory
+    // Program memory
     output reg rd_mem,
-    output reg wr_mem,
+    output reg wr_mem, // <-- Precisa escrever na memória
+
+    // Data memory
+    output reg rd_memd,
+    output reg wr_memd,
 
     // Program counter
     output reg wr_ip,
@@ -41,7 +46,11 @@ module fsm (
     output reg pop_rtn,
     output reg rst_rtn
   );
-  // TODO: Verificar a necessidade de rst_stk e rst_tos
+  // TODO: Verificar a necessidade de rst_stack e rst_tos
+  // ------
+
+  wire [4:0] instruction;
+  assign instruction = instruction_register[15:11];
 
   // TODO: Concat + colocar isso como config global
   localparam RESET_ALL  = 0;
@@ -89,8 +98,6 @@ module fsm (
 
   reg [5:0] state, next_state; // Mudar para parametros
 
-  reg [15:0] instruction_register; // Mudar para parametros
-
   always @(posedge clk, posedge rst)
   begin : RESET_FSM
     if(rst)
@@ -112,24 +119,33 @@ module fsm (
       SAVE_INSTR:
         next_state = DECODE;
       DECODE:
-      case (instruction_register[15:10])
-        PUSH:
-          next_state = READ_MEMD;
-        PUSH_I:
-          next_state = PUSH_STACK;
-        PUSH_T:
-          next_state = GET_A;
-        POP,NOT: // ULA + POP
-          next_state = SET_A;
-        IF_EQ, IF_LE: // BRANCH
-          next_state = SET_A;
-        default:
-          next_state = 0;
-      endcase
+      begin
+        $display("%b", instruction);
+        case (instruction)
+          PUSH:
+            next_state = READ_MEMD;
+          PUSH_I:
+            next_state = PUSH_STACK;
+          PUSH_T:
+            next_state = GET_A;
+          POP, ADD, SUB, MUL, DIV, AND,
+          NAND, OR, XOR, CMP, NOT,IF_EQ,
+          IF_GT, IF_LT, IF_GE, IF_LE:
+            next_state = SET_A;
+          GOTO:
+            next_state = JUMP;
+          CALL:
+            next_state = PUSH_RTN;
+          RET:
+            next_state = RET_RTN;
+          default:
+            next_state = 0;
+        endcase
+      end
       SET_A:
-        next_state = instruction_register[15:10] == POP ? WRITE_MEMD : SAVE_A;
+        next_state = instruction == POP ? WRITE_MEMD : SAVE_A;
       SAVE_A:
-      case(instruction_register[15:10])
+      case(instruction)
         NOT:
           next_state = VERIFY;
         IF_EQ,IF_LE: // Jumps
@@ -142,7 +158,7 @@ module fsm (
       SAVE_B:
         next_state = VERIFY;
       VERIFY:
-      case (instruction_register[15:10])
+      case (instruction)
         ADD,NOT: // ULA
           next_state = PUSH_STACK;
         IF_EQ,IF_LE: // Jumps
@@ -175,822 +191,142 @@ module fsm (
 
   always @(*)
   begin
+    // Temp regs
+    rst_temp1 = 0;
+    rst_temp2 = 0;
+    rd_temp1 = 0;
+    rd_temp2 = 0;
+    wr_temp1 = 0;
+    wr_temp2 = 0;
+
+    // IR register
+    rd_ir = 0;
+    wr_ir = 0;
+    rst_ir = 0;
+
+    rst_tos = 0;
+
+    // RFLAGs
+    rst_flags = 0;
+
+    // Data memory
+    rd_mem = 0;
+    wr_mem = 0;
+
+    // Program counter
+    wr_ip = 0;
+    rd_ip = 0;
+    rst_ip = 0;
+    inc_ip = 0;
+
+    // Data stack
+    push_stack = 0;
+    pop_stack = 0;
+    rst_stack = 0;
+
+    // Routine stack
+    push_rtn = 0;
+    pop_rtn = 0;
+    rst_rtn = 0;
+
     case (state)
       RESET_ALL:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        rst_flags   = 0;
-        rst_ip      = 0;
-        rst_ir      = 0;
-        rst_rtn     = 0;
-        rst_stack   = 0;
-        rst_temp1   = 0;
-        rst_temp2   = 0;
-        rst_tos     = 0;
+        rst_flags   = 1;
+        rst_ip      = 1;
+        rst_ir      = 1;
+        rst_rtn     = 1;
+        rst_stack   = 1;
+        rst_temp1   = 1;
+        rst_temp2   = 1;
+        rst_tos     = 1;
       end
 
       GET_INSTR:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         rd_mem = 1;
       end
 
       SAVE_INSTR:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         rd_mem = 1;
         wr_ir = 1;
       end
 
       DECODE:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         rd_ir = 1;
       end
 
       SET_A:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         pop_stack = 1;
       end
 
       SAVE_A:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         wr_temp1 = 1;
       end
 
       SET_B:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         pop_stack = 1;
       end
 
       SAVE_B:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         wr_temp2 = 1;
       end
 
       VERIFY:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
 
       end
 
       PUSH_STACK:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         push_stack = 1;
       end
 
       JUMP:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         wr_ip = 1;
       end
 
       PUSH_RTN:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         push_rtn = 1;
         rd_ip = 1;
       end
 
       RET_RTN:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         pop_rtn = 1;
       end
 
       GET_A:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         rd_temp1 = 1;
       end
 
       READ_MEMD:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         rd_mem = 1;
       end
 
       WRITE_MEMD:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         wr_mem = 1;
       end
 
       FINISH:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
 
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
 
       end
 
       INC_IP:
       begin
-        // Temp regs
-        rst_temp1 = 0;
-        rst_temp2 = 0;
-        rd_temp1 = 0;
-        rd_temp2 = 0;
-        wr_temp1 = 0;
-        wr_temp2 = 0;
-
-        // IR register
-        rd_ir = 0;
-        wr_ir = 0;
-        rst_ir = 0;
-
-
-        rst_tos = 0;
-
-        // RFLAGs
-        rst_flags = 0;
-
-        // Data memory
-        rd_mem = 0;
-        wr_mem = 0;
-
-        // Program counter
-        wr_ip = 0;
-        rd_ip = 0;
-        rst_ip = 0;
-        inc_ip = 0;
-
-        // Data stack
-        push_stack = 0;
-        pop_stack = 0;
-        rst_stack = 0;
-
-        // Routine stack
-        push_rtn = 0;
-        pop_rtn = 0;
-        rst_rtn = 0;
-
-        // O A VERA
         inc_ip = 1;
       end
 
