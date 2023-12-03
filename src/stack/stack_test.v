@@ -1,4 +1,5 @@
 `include "src/stack/stack.v"
+`include "src/register/register.v"
 `timescale 1ns/1ps
 
 module stack_test;
@@ -33,8 +34,16 @@ module stack_test;
           .empty(empty),
           .full(full),
           .data_in(data_in),
-          .data_out(data_out)
+          .data_out(data_out),
+          .pointer(pointer),
+          .rst_pointer(rst_pointer),
+          .inc_pointer(inc_pointer),
+          .dec_pointer(dec_pointer)
         );
+
+  register #(.DATA_SIZE(DEPTH)) pointer_inst (.out(pointer), .clk(clk), .rst(rst_pointer), .inc(inc_pointer), .dec(dec_pointer), .load(1'b0));
+  wire [DEPTH - 1:0] pointer;
+  wire rst_pointer, inc_pointer, dec_pointer;
 
   task reset;  // reset task
     begin
@@ -141,6 +150,7 @@ module stack_test;
     expect_empty(0);
     pop_stack();
     expect_out({WIDTH>>2{4'hA}});
+    @(negedge clk);
     expect_empty(1);
 
     #20;

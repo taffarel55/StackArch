@@ -19,33 +19,39 @@ module stack #(
     input wire clk,                   //! Clock pin
     input wire rst,                   //! Reset pin
     input wire pop,                   //! Pop pin (read)
-    input wire push                   //! Push pin (write)
+    input wire push,                  //! Push pin (write)
+    input [DEPTH - 1:0] pointer,      //! Stack pointer
+    output reg rst_pointer,
+    output reg inc_pointer,
+    output reg dec_pointer
   );
 
   reg [WIDTH-1:0] lifo [0:DEPTH - 1]; //! Last In First Out queue
-  reg [DEPTH - 1:0] pointer;          //! Stack pointer
 
   assign empty = !(|pointer);
   assign full = !(|(pointer ^ DEPTH));
 
   always @(posedge clk or posedge rst)
   begin : STACK
+    rst_pointer <= 0;
+    inc_pointer <= 0;
+    dec_pointer <= 0;
     if(rst)
     begin
       data_out <= {WIDTH{1'b0}};
-      pointer <= 0;
+      rst_pointer <= 1;
     end
     else
     begin
       if(push && !full)
       begin
         lifo[pointer] <= data_in;
-        pointer <= pointer + 1;
+        inc_pointer <= 1;
       end
       else if(pop && !empty)
       begin
         data_out <= lifo[pointer-1];
-        pointer <= pointer - 1;
+        dec_pointer <= 1;
       end
     end
   end
