@@ -12,8 +12,8 @@
     // Configure properties specific to VS Code.
     "vscode": {
       "settings": {
-        "files.autoSave": "afterDelay",
-        "files.autoSaveDelay": 1500,
+        // "files.autoSave": "afterDelay",
+        // "files.autoSaveDelay": 1500,
         "files.insertFinalNewline": true,
         "workbench.iconTheme": "material-icon-theme",
         "verilog.linting.linter": "iverilog",

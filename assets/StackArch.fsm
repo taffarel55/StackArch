@@ -3,7 +3,7 @@
   <states>
     <state>
       <values>rst_IP=1, rst_RTN=1, rst_IR=1, rst_1=1, rst_2=1, rst_STK=1, rst_TOS=1, rst_F=1</values>
-      <position x="780.0" y="240.0"/>
+      <position x="840.0" y="300.0"/>
       <number>0</number>
       <name>RESET_ALL</name>
       <radius>380</radius>
@@ -185,7 +185,7 @@
   <transitions>
     <transition>
       <values></values>
-      <position x="1225.0" y="245.6605"/>
+      <position x="1254.0448" y="253.37325"/>
       <fromState reference="../../../states/state"/>
       <toState reference="../../../states/state[2]"/>
       <condition></condition>
@@ -199,7 +199,7 @@
     </transition>
     <transition>
       <values></values>
-      <position x="1805.5521" y="129.13037"/>
+      <position x="1805.5521" y="129.1304"/>
       <fromState reference="../../../states/state[3]"/>
       <toState reference="../../../states/state[4]"/>
       <condition></condition>
@@ -311,7 +311,7 @@
     </transition>
     <transition>
       <values></values>
-      <position x="2398.3447" y="-443.86218"/>
+      <position x="2398.3447" y="-443.86224"/>
       <fromState reference="../../../states/state[4]"/>
       <toState reference="../../../states/state[10]"/>
       <condition>push_I</condition>
@@ -339,7 +339,7 @@
     </transition>
     <transition>
       <values></values>
-      <position x="3499.6191" y="-47.83553"/>
+      <position x="3499.6191" y="-47.83554"/>
       <fromState reference="../../../states/state[10]"/>
       <toState reference="../../../states/state[17]"/>
       <condition></condition>

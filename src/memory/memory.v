@@ -16,7 +16,7 @@ module memory #(
     output wire [DWIDTH-1:0] data_out //! Dados lidos da memória
   );
 
-  reg [DWIDTH-1:0] memory [0:2**AWIDTH-1]; //! Memória de programa parametrizável
+  reg [DWIDTH-1:0] memory [0:2**AWIDTH-1];  //! Memória de programa parametrizável
   reg [DWIDTH-1:0] rdata;                   //! Dados lidos da memória
 
   //! Lógica para determinar a saída de dados da memória

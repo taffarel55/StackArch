@@ -1,7 +1,12 @@
-module fsm (
+module fsm #(
+    parameter integer DEPTH_TOS_POINTER = 32
+  )(
     input wire clk,
     input wire rst,
-    input wire [15:0] instruction_register,
+    input wire [4:0] instruction,
+    input wire [10:0] operand,
+
+    output reg [15:0] stack_data,
 
     // Temp regs
     output reg rst_temp1,
@@ -44,13 +49,13 @@ module fsm (
     // Routine stack
     output reg push_rtn,
     output reg pop_rtn,
-    output reg rst_rtn
+    output reg rst_rtn,
+
+    // Pointer to data stack
+    output reg [DEPTH_TOS_POINTER - 1:0] tos_pointer
   );
   // TODO: Verificar a necessidade de rst_stack e rst_tos
-  // ------
 
-  wire [4:0] instruction;
-  assign instruction = instruction_register[15:11];
 
   // TODO: Concat + colocar isso como config global
   localparam RESET_ALL  = 0;
@@ -120,7 +125,6 @@ module fsm (
         next_state = DECODE;
       DECODE:
       begin
-        $display("%b", instruction);
         case (instruction)
           PUSH:
             next_state = READ_MEMD;
@@ -183,7 +187,7 @@ module fsm (
       FINISH:
         next_state = INC_IP;
       INC_IP:
-        next_state = DECODE;
+        next_state = GET_INSTR;
       default:
         next_state = RESET_ALL;
     endcase
@@ -210,8 +214,8 @@ module fsm (
     rst_flags = 0;
 
     // Data memory
-    rd_mem = 0;
-    wr_mem = 0;
+    rd_memd = 0;
+    wr_memd = 0;
 
     // Program counter
     wr_ip = 0;
@@ -236,10 +240,11 @@ module fsm (
         rst_ip      = 1;
         rst_ir      = 1;
         rst_rtn     = 1;
-        rst_stack   = 1;
         rst_temp1   = 1;
         rst_temp2   = 1;
-        rst_tos     = 1;
+        rst_stack   = 1;
+
+        tos_pointer = 0;
       end
 
       GET_INSTR:
@@ -261,6 +266,7 @@ module fsm (
       SET_A:
       begin
         pop_stack = 1;
+        tos_pointer = tos_pointer - 1;
       end
 
       SAVE_A:
@@ -285,7 +291,10 @@ module fsm (
 
       PUSH_STACK:
       begin
+        // TODO: tá cheio??
+        stack_data = operand;
         push_stack = 1;
+        tos_pointer = tos_pointer + 1;
       end
 
       JUMP:
@@ -311,12 +320,12 @@ module fsm (
 
       READ_MEMD:
       begin
-        rd_mem = 1;
+        rd_memd = 1;
       end
 
       WRITE_MEMD:
       begin
-        wr_mem = 1;
+        wr_memd = 1;
       end
 
       FINISH:

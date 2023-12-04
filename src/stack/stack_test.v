@@ -35,25 +35,25 @@ module stack_test;
           .full(full),
           .data_in(data_in),
           .data_out(data_out),
-          .pointer(pointer),
-          .rst_pointer(rst_pointer),
-          .inc_pointer(inc_pointer),
-          .dec_pointer(dec_pointer)
+          .pointer(pointer)
         );
 
-  register #(.DATA_SIZE(DEPTH)) pointer_inst (.out(pointer), .clk(clk), .rst(rst_pointer), .inc(inc_pointer), .dec(dec_pointer), .load(1'b0));
-  wire [DEPTH - 1:0] pointer;
-  wire rst_pointer, inc_pointer, dec_pointer;
+  reg [DEPTH - 1:0] pointer;
 
   task reset;  // reset task
     begin
       rst  = 1'b1;
+      pointer = 0;
+
       pop  = 1'b0;
       push = 1'b0;
+
       data_in  = {WIDTH{1'b0}};
+
       @(negedge clk);
       rst = 1'b0;
       @(negedge clk);
+
     end
   endtask
 
@@ -63,6 +63,7 @@ module stack_test;
       pop = 1'b1;
       @(negedge clk);
       pop = 1'b0;
+      pointer = pointer - 1;
     end
   endtask
 
@@ -73,6 +74,7 @@ module stack_test;
       data_in = data_in_tb;
       @(negedge clk);
       push = 1'b0;
+      pointer = pointer + 1;
       #10;
     end
   endtask

@@ -32,7 +32,9 @@ module cpu_test;
     @(negedge clk);
     rst = 0;
 
-    #30;
+    #26;
+    $display("%b", cpu_inst.memory_data.memory[4]);
+
     $finish;
   end
 
