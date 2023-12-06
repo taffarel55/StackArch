@@ -305,6 +305,7 @@ module fsm #(
         stack_data = data_to_stack;
         push_stack = 1;
         tos_pointer = tos_pointer + 1;
+        //TODO: tá passando aqui 2x no PUSH (pq??)
       end
 
       JUMP:
