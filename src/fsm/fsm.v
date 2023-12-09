@@ -79,6 +79,8 @@ module fsm #(
   localparam INC_IP     = 17;
   localparam PREP_MEMD  = 18;
   localparam PREP_IMM   = 19;
+  localparam INC_STACK  = 20;
+  localparam DEC_STACK  = 21;
 
   // TODO: Concat + colocar isso como config global
   localparam PUSH = 0;
@@ -153,7 +155,9 @@ module fsm #(
         endcase
       end
       SET_A:
-        next_state = instruction == POP ? WRITE_MEMD : SAVE_A;
+        next_state = instruction == POP ? DEC_STACK : SAVE_A;
+      DEC_STACK:
+        next_state = WRITE_MEMD;
       SAVE_A:
       case(instruction)
         NOT:
@@ -179,7 +183,7 @@ module fsm #(
       PREP_IMM:
         next_state = PUSH_STACK;
       PUSH_STACK:
-        next_state = FINISH;
+        next_state = INC_STACK;
       JUMP:
         next_state = FINISH;
       PUSH_RTN:
@@ -198,6 +202,8 @@ module fsm #(
         next_state = INC_IP;
       INC_IP:
         next_state = GET_INSTR;
+      INC_STACK:
+        next_state = FINISH;
       default:
         next_state = RESET_ALL;
     endcase
@@ -276,6 +282,10 @@ module fsm #(
       SET_A:
       begin
         pop_stack = 1;
+      end
+
+      DEC_STACK:
+      begin
         tos_pointer = tos_pointer - 1;
       end
 
@@ -304,7 +314,6 @@ module fsm #(
         // TODO: tá cheio??
         stack_data = data_to_stack;
         push_stack = 1;
-        tos_pointer = tos_pointer + 1;
         //TODO: tá passando aqui 2x no PUSH (pq??)
       end
 
@@ -359,6 +368,11 @@ module fsm #(
       INC_IP:
       begin
         inc_ip = 1;
+      end
+
+      INC_STACK:
+      begin
+        tos_pointer = tos_pointer + 1;
       end
 
     endcase

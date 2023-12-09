@@ -1,10 +1,17 @@
-`include "src/cpu.v"
 `timescale 1ns/1ps
+`include "src/cpu.v"
+`include "src/testbenchs/list.v"
+
+//-----------------------------------------//
+// DEFINA O PROGRAMA A SER EXECUTADO AQUI: //
+// ----------------------------------------//
+`define PROGRAM_NAME "program_transfer_data"
+// ------------------------------------------
 
 module cpu_test;
 
   // Parameters
-  localparam PROGRAM_FILE = "../src/program.txt";
+  localparam PROGRAM_FILE = {"../src/programs/",`PROGRAM_NAME,".txt"};
 
   //Ports
   reg  clk;
@@ -20,6 +27,19 @@ module cpu_test;
 
   always #1  clk = ! clk ;
 
+  integer i = 0;
+  reg [31:0] final_value_test;
+
+  initial
+  begin
+    repeat(500)
+    begin
+      #1;
+    end
+    $display("TIMEOUT!");
+    $finish;
+  end
+
   initial
   begin
     // Create vcd
@@ -32,8 +52,17 @@ module cpu_test;
     @(negedge clk);
     rst = 0;
 
-    #400;
-    $display("%b", cpu_inst.memory_data.memory[4]);
+`ifdef PROGRAM_NAME
+    `ifdef PROGRAM_TRANSFER_DATA
+      `include "src/testbenchs/program_transfer_data.v"
+    `endif
+
+    // Outros programas vão aqui
+
+`else
+    `error "PROGRAM_NAME não definido ou vazio!"
+
+`endif
 
     $finish;
   end
