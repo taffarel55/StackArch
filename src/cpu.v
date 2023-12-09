@@ -50,6 +50,7 @@ module cpu #(
          .rd_mem(rd_mem),
          .wr_memd(wr_memd),
          .rd_memd(rd_memd),
+         .data_out_memd(data_out_memd),
          .rst_ip(rst_ip),
          .inc_ip(inc_ip),
          .rst_ir(rst_ir),

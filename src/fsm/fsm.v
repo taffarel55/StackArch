@@ -34,6 +34,7 @@ module fsm #(
     // Data memory
     output reg rd_memd,
     output reg wr_memd,
+    input wire [15:0] data_out_memd,
 
     // Program counter
     output reg wr_ip,
@@ -76,6 +77,10 @@ module fsm #(
   localparam WRITE_MEMD = 15;
   localparam FINISH     = 16;
   localparam INC_IP     = 17;
+  localparam PREP_MEMD  = 18;
+  localparam PREP_IMM   = 19;
+  localparam INC_STACK  = 20;
+  localparam DEC_STACK  = 21;
 
   // TODO: Concat + colocar isso como config global
   localparam PUSH = 0;
@@ -103,6 +108,9 @@ module fsm #(
 
   reg [5:0] state, next_state; // Mudar para parametros
 
+  reg [15:0] data_to_stack;
+
+
   always @(posedge clk, posedge rst)
   begin : RESET_FSM
     if(rst)
@@ -129,7 +137,7 @@ module fsm #(
           PUSH:
             next_state = READ_MEMD;
           PUSH_I:
-            next_state = PUSH_STACK;
+            next_state = PREP_IMM;
           PUSH_T:
             next_state = GET_A;
           POP, ADD, SUB, MUL, DIV, AND,
@@ -147,7 +155,9 @@ module fsm #(
         endcase
       end
       SET_A:
-        next_state = instruction == POP ? WRITE_MEMD : SAVE_A;
+        next_state = instruction == POP ? DEC_STACK : SAVE_A;
+      DEC_STACK:
+        next_state = WRITE_MEMD;
       SAVE_A:
       case(instruction)
         NOT:
@@ -170,8 +180,10 @@ module fsm #(
         default:
           next_state = FINISH;
       endcase
+      PREP_IMM:
+        next_state = PUSH_STACK;
       PUSH_STACK:
-        next_state = FINISH;
+        next_state = INC_STACK;
       JUMP:
         next_state = FINISH;
       PUSH_RTN:
@@ -181,6 +193,8 @@ module fsm #(
       GET_A:
         next_state = PUSH_STACK;
       READ_MEMD:
+        next_state = PREP_MEMD;
+      PREP_MEMD:
         next_state = PUSH_STACK;
       WRITE_MEMD:
         next_state = FINISH;
@@ -188,6 +202,8 @@ module fsm #(
         next_state = INC_IP;
       INC_IP:
         next_state = GET_INSTR;
+      INC_STACK:
+        next_state = FINISH;
       default:
         next_state = RESET_ALL;
     endcase
@@ -266,6 +282,10 @@ module fsm #(
       SET_A:
       begin
         pop_stack = 1;
+      end
+
+      DEC_STACK:
+      begin
         tos_pointer = tos_pointer - 1;
       end
 
@@ -292,9 +312,9 @@ module fsm #(
       PUSH_STACK:
       begin
         // TODO: tá cheio??
-        stack_data = operand;
+        stack_data = data_to_stack;
         push_stack = 1;
-        tos_pointer = tos_pointer + 1;
+        //TODO: tá passando aqui 2x no PUSH (pq??)
       end
 
       JUMP:
@@ -323,6 +343,17 @@ module fsm #(
         rd_memd = 1;
       end
 
+      PREP_IMM:
+      begin
+        data_to_stack = operand;
+      end
+
+      PREP_MEMD:
+      begin
+        rd_memd = 1;
+        data_to_stack = data_out_memd;
+      end
+
       WRITE_MEMD:
       begin
         wr_memd = 1;
@@ -337,6 +368,11 @@ module fsm #(
       INC_IP:
       begin
         inc_ip = 1;
+      end
+
+      INC_STACK:
+      begin
+        tos_pointer = tos_pointer + 1;
       end
 
     endcase

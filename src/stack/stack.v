@@ -42,7 +42,7 @@ module stack #(
       end
       else if(pop)
       begin
-        data_out <= lifo[pointer+1];
+        data_out <= lifo[pointer-1];
       end
     end
   end
