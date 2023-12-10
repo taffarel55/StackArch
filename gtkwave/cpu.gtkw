@@ -1,0 +1,112 @@
+[*]
+[*] GTKWave Analyzer v3.3.117 (w)1999-2023 BSI
+[*] Sun Dec 10 00:56:01 2023
+[*]
+[dumpfile] "../build/cpu.vcd"
+[dumpfile_mtime] "Sun Dec 10 00:16:22 2023"
+[dumpfile_size] 28173
+[savefile] "cpu.gtkw"
+[timestart] 15460
+[size] 1366 689
+[pos] -1367 -1
+*-13.800000 78070 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] cpu_test.
+[treeopen] cpu_test.cpu_inst.
+[treeopen] cpu_test.cpu_inst.controller.
+[sst_width] 261
+[signals_width] 190
+[sst_expanded] 1
+[sst_vpaned_height] 186
+@28
+[color] 3
+cpu_test.clk
+@200
+-FSM
+@24
+[color] 2
+cpu_test.cpu_inst.controller.state[5:0]
+@25
+[color] 2
+cpu_test.cpu_inst.controller.data_to_stack[15:0]
+@200
+-memory_program
+@24
+cpu_test.cpu_inst.memory_program.addr[9:0]
+@28
+cpu_test.cpu_inst.memory_program.data_out[15:0]
+@200
+-IP_register
+@22
+[color] 5
+cpu_test.cpu_inst.ip_regiser.out[9:0]
+@200
+-IR_register
+@28
+[color] 6
+cpu_test.cpu_inst.ir_regiser.out[15:0]
+@200
+-memory_data
+@c00024
+[color] 1
+cpu_test.cpu_inst.memory_data.addr[10:0]
+@28
+(0)cpu_test.cpu_inst.memory_data.addr[10:0]
+(1)cpu_test.cpu_inst.memory_data.addr[10:0]
+(2)cpu_test.cpu_inst.memory_data.addr[10:0]
+(3)cpu_test.cpu_inst.memory_data.addr[10:0]
+(4)cpu_test.cpu_inst.memory_data.addr[10:0]
+(5)cpu_test.cpu_inst.memory_data.addr[10:0]
+(6)cpu_test.cpu_inst.memory_data.addr[10:0]
+(7)cpu_test.cpu_inst.memory_data.addr[10:0]
+(8)cpu_test.cpu_inst.memory_data.addr[10:0]
+(9)cpu_test.cpu_inst.memory_data.addr[10:0]
+(10)cpu_test.cpu_inst.memory_data.addr[10:0]
+@1401200
+-group_end
+@24
+[color] 1
+cpu_test.cpu_inst.memory_data.data_in[15:0]
+@c00024
+[color] 1
+cpu_test.cpu_inst.memory_data.data_out[15:0]
+@28
+(0)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(1)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(2)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(3)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(4)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(5)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(6)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(7)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(8)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(9)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(10)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(11)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(12)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(13)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(14)cpu_test.cpu_inst.memory_data.data_out[15:0]
+(15)cpu_test.cpu_inst.memory_data.data_out[15:0]
+@1401200
+-group_end
+@200
+-stack_data
+@24
+[color] 3
+cpu_test.cpu_inst.stack_data.data_in[15:0]
+[color] 3
+cpu_test.cpu_inst.stack_data.data_out[15:0]
+@22
+[color] 3
+cpu_test.cpu_inst.stack_data.pointer[31:0]
+@28
+[color] 3
+cpu_test.cpu_inst.stack_data.push
+[color] 3
+cpu_test.cpu_inst.stack_data.pop
+@200
+-Temp regs
+@24
+cpu_test.cpu_inst.controller.temp1[15:0]
+cpu_test.cpu_inst.controller.temp2[15:0]
+[pattern_trace] 1
+[pattern_trace] 0
