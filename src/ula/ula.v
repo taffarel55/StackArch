@@ -16,20 +16,20 @@ module ula #(
     input wire [3:0] opcode                 //! Operand code
   );
 
-  localparam  ADD  = 0; //! A+B
-  localparam  SUB  = 1; //! A-B
-  localparam  MUL  = 2; //! A*B
-  localparam  DIV  = 3; //! A/B
-  localparam  AND  = 4; //! A AND B
-  localparam  NAND = 5; //! A NAND B
-  localparam  OR   = 6; //! A OR B
-  localparam  XOR  = 7; //! A XOR B
-  localparam  CMP  = 8; //! 1:A>B, 0:A=B, -1:A<B
-  localparam  NOT  = 9; //! !A
+  localparam  ADD  = 4; //! A+B
+  localparam  SUB  = 5; //! A-B
+  localparam  MUL  = 6; //! A*B
+  localparam  DIV  = 7; //! A/B
+  localparam  AND  = 8; //! A AND B
+  localparam  NAND = 9; //! A NAND B
+  localparam  OR   = 10; //! A OR B
+  localparam  XOR  = 11; //! A XOR B
+  localparam  CMP  = 12; //! 1:A>B, 0:A=B, -1:A<B
+  localparam  NOT  = 13; //! !A
 
   // TODO: Adicionar suporte a um LSFR
 
-  always @(*)
+  always @*
   begin : ULA
     case (opcode)
       ADD:
@@ -41,11 +41,11 @@ module ula #(
       DIV:
         out = operand_a / operand_b;
       AND:
-        out = operand_a && operand_b;
+        out = operand_a & operand_b;
       NAND:
-        out = !(operand_a && operand_b);
+        out = !(operand_a & operand_b);
       OR:
-        out = operand_a || operand_b;
+        out = operand_a | operand_b;
       XOR:
         out = operand_a ^ operand_b;
       CMP:

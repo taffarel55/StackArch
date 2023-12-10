@@ -43,7 +43,7 @@
     </state>
     <state>
       <values>pop=1</values>
-      <position x="2400.0" y="0.0"/>
+      <position x="2160.0" y="180.0"/>
       <number>4</number>
       <name>SET_A</name>
       <radius>90</radius>
@@ -201,6 +201,46 @@
       <initialAngle>12</initialAngle>
       <defaultDC>false</defaultDC>
     </state>
+    <state>
+      <values></values>
+      <position x="3540.0" y="-60.0"/>
+      <number>20</number>
+      <name>INC_STACK</name>
+      <radius>70</radius>
+      <isInitial>false</isInitial>
+      <initialAngle>12</initialAngle>
+      <defaultDC>false</defaultDC>
+    </state>
+    <state>
+      <values></values>
+      <position x="2400.0" y="180.0"/>
+      <number>21</number>
+      <name>DEC_STACK</name>
+      <radius>70</radius>
+      <isInitial>false</isInitial>
+      <initialAngle>12</initialAngle>
+      <defaultDC>false</defaultDC>
+    </state>
+    <state>
+      <values></values>
+      <position x="2760.0" y="120.0"/>
+      <number>22</number>
+      <name>DEC_STACK_AGAIN</name>
+      <radius>70</radius>
+      <isInitial>false</isInitial>
+      <initialAngle>12</initialAngle>
+      <defaultDC>false</defaultDC>
+    </state>
+    <state>
+      <values></values>
+      <position x="3060.0" y="240.0"/>
+      <number>23</number>
+      <name>GET_ULA</name>
+      <radius>70</radius>
+      <isInitial>false</isInitial>
+      <initialAngle>12</initialAngle>
+      <defaultDC>false</defaultDC>
+    </state>
   </states>
   <transitions>
     <transition>
@@ -226,17 +266,10 @@
     </transition>
     <transition>
       <values></values>
-      <position x="2148.981" y="89.095764"/>
+      <position x="2030.0" y="44.0"/>
       <fromState reference="../../../states/state[4]"/>
       <toState reference="../../../states/state[5]"/>
       <condition>ula or branch or pop</condition>
-    </transition>
-    <transition>
-      <values></values>
-      <position x="2356.8933" y="353.43506"/>
-      <fromState reference="../../../states/state[5]"/>
-      <toState reference="../../../states/state[7]"/>
-      <condition>!pop</condition>
     </transition>
     <transition>
       <values></values>
@@ -244,13 +277,6 @@
       <fromState reference="../../../states/state[7]"/>
       <toState reference="../../../states/state[6]"/>
       <condition>!not and !branch</condition>
-    </transition>
-    <transition>
-      <values></values>
-      <position x="2730.0" y="176.87302"/>
-      <fromState reference="../../../states/state[6]"/>
-      <toState reference="../../../states/state[8]"/>
-      <condition></condition>
     </transition>
     <transition>
       <values></values>
@@ -265,13 +291,6 @@
       <fromState reference="../../../states/state[8]"/>
       <toState reference="../../../states/state[9]"/>
       <condition></condition>
-    </transition>
-    <transition>
-      <values></values>
-      <position x="3143.4617" y="100.69235"/>
-      <fromState reference="../../../states/state[9]"/>
-      <toState reference="../../../states/state[10]"/>
-      <condition>ula</condition>
     </transition>
     <transition>
       <values></values>
@@ -338,20 +357,6 @@
     </transition>
     <transition>
       <values></values>
-      <position x="2680.277" y="-190.54355"/>
-      <fromState reference="../../../states/state[5]"/>
-      <toState reference="../../../states/state[16]"/>
-      <condition>pop</condition>
-    </transition>
-    <transition>
-      <values></values>
-      <position x="3499.6191" y="-47.83554"/>
-      <fromState reference="../../../states/state[10]"/>
-      <toState reference="../../../states/state[17]"/>
-      <condition></condition>
-    </transition>
-    <transition>
-      <values></values>
       <position x="3518.7434" y="551.10535"/>
       <fromState reference="../../../states/state[11]"/>
       <toState reference="../../../states/state[17]"/>
@@ -412,6 +417,69 @@
       <fromState reference="../../../states/state[4]"/>
       <toState reference="../../../states/state[20]"/>
       <condition>push_I</condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="3391.833" y="-248.19957"/>
+      <fromState reference="../../../states/state[10]"/>
+      <toState reference="../../../states/state[21]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="3685.4583" y="103.02787"/>
+      <fromState reference="../../../states/state[21]"/>
+      <toState reference="../../../states/state[17]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="2290.0" y="54.0"/>
+      <fromState reference="../../../states/state[5]"/>
+      <toState reference="../../../states/state[22]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="2674.3992" y="-42.668118"/>
+      <fromState reference="../../../states/state[22]"/>
+      <toState reference="../../../states/state[16]"/>
+      <condition>pop</condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="2426.5383" y="422.30774"/>
+      <fromState reference="../../../states/state[22]"/>
+      <toState reference="../../../states/state[7]"/>
+      <condition>!pop</condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="2640.2307" y="170.15381"/>
+      <fromState reference="../../../states/state[6]"/>
+      <toState reference="../../../states/state[23]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="2857.1858" y="187.60475"/>
+      <fromState reference="../../../states/state[23]"/>
+      <toState reference="../../../states/state[8]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="3058.3127" y="395.66257"/>
+      <fromState reference="../../../states/state[9]"/>
+      <toState reference="../../../states/state[24]"/>
+      <condition>ula</condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="3145.9275" y="-54.814484"/>
+      <fromState reference="../../../states/state[24]"/>
+      <toState reference="../../../states/state[10]"/>
+      <condition></condition>
     </transition>
   </transitions>
 </fsm>

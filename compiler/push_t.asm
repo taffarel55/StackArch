@@ -1,0 +1,4 @@
+PUSH_I 1
+PUSH_I 2
+ADD
+PUSH_T

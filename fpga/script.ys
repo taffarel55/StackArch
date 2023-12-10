@@ -1,0 +1,14 @@
+// Working...
+
+# read design
+read_verilog ../src/cpu.v
+read_verilog ../src/fsm/fsm.v
+read_verilog ../src/stack/stack.v
+read_verilog ../src/ula/ula.v
+read_verilog ../src/register/register.v
+read_verilog ../src/memory/memory.v
+
+# synthesis for Intel (Altera) FPGAs
+synth_intel -family cycloneiv -top cpu
+
+stat;

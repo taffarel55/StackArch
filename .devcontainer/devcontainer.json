@@ -30,7 +30,8 @@
         "raits.verilog-extensions",
         "PKief.material-icon-theme",
         "ms-azuretools.vscode-docker",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "tintinweb.graphviz-interactive-preview"
       ]
     }
   },
