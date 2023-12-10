@@ -1,0 +1,42 @@
+# read design
+read_verilog ../src/cpu.v
+read_verilog ../src/fsm/fsm.v
+read_verilog ../src/stack/stack.v
+read_verilog ../src/ula/ula.v
+read_verilog ../src/register/register.v
+read_verilog ../src/memory/memory.v
+
+# elaborate design hierarchy
+hierarchy -check -top cpu
+
+# high-level synthesis
+proc; opt; fsm; opt; memory; opt
+
+# show
+show -format dot -prefix ./cpu_rtl
+
+# mapping to internal cell library
+techmap; opt
+
+# map to target architecture
+read_liberty -lib ./libs/osu018_stdcells.lib
+dfflibmap -liberty ./libs/osu018_stdcells.lib
+abc -D 500 -constr constraints.sdc -liberty ./libs/osu018_stdcells.lib
+
+# split larger signals
+splitnets -ports; opt
+
+# cleanup
+clean
+
+# write synthesized design
+write_verilog cpu_synth.v
+
+# write intermediate language
+write_ilang cpu_ilang.txt
+
+# show
+# show -format dot -lib cpu_synth.v -prefix ./cpu_synthetized
+
+# stat
+stat;
