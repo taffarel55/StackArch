@@ -1,11 +1,10 @@
 `timescale 1ns/1ps
 `include "src/cpu.v"
-`include "src/testbenchs/list.v"
 
 //-----------------------------------------//
 // DEFINA O PROGRAMA A SER EXECUTADO AQUI: //
 // ----------------------------------------//
-`define PROGRAM_NAME "program_transfer_data"
+`define PROGRAM_NAME "program_ula"
 // ------------------------------------------
 
 module cpu_test;
@@ -32,13 +31,15 @@ module cpu_test;
 
   initial
   begin
-    repeat(500)
+    repeat(1000)
     begin
       #1;
     end
     $display("TIMEOUT!");
     $finish;
   end
+
+  reg [31:0] keys [4:13];
 
   initial
   begin
@@ -52,17 +53,12 @@ module cpu_test;
     @(negedge clk);
     rst = 0;
 
-`ifdef PROGRAM_NAME
-    `ifdef PROGRAM_TRANSFER_DATA
-      `include "src/testbenchs/program_transfer_data.v"
-    `endif
+    //------------------------------------------//
+    // DEFINA O TESTBENCH A SER EXECUTADO AQUI: //
+    // -----------------------------------------//
+`include "src/testbenchs/program_ula.v"
+    // ------------------------------------------
 
-    // Outros programas vão aqui
-
-`else
-    `error "PROGRAM_NAME não definido ou vazio!"
-
-`endif
 
     $finish;
   end

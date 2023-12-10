@@ -12,16 +12,16 @@ module ula_test;
   reg  [DATA_SIZE-1:0] operand_b;
   reg  [3:0] opcode;
 
-  localparam  ADD  = 0; //! A+B
-  localparam  SUB  = 1; //! A-B
-  localparam  MUL  = 2; //! A*B
-  localparam  DIV  = 3; //! A/B
-  localparam  AND  = 4; //! A AND B
-  localparam  NAND = 5; //! A NAND B
-  localparam  OR   = 6; //! A OR B
-  localparam  XOR  = 7; //! A XOR B
-  localparam  CMP  = 8; //! 1:A>B, 0:A=B, -1:A<B
-  localparam  NOT  = 9; //! !A
+  localparam  ADD  = 4; //! A+B
+  localparam  SUB  = 5; //! A-B
+  localparam  MUL  = 6; //! A*B
+  localparam  DIV  = 7; //! A/B
+  localparam  AND  = 8; //! A AND B
+  localparam  NAND = 9; //! A NAND B
+  localparam  OR   = 10; //! A OR B
+  localparam  XOR  = 11; //! A XOR B
+  localparam  CMP  = 12; //! 1:A>B, 0:A=B, -1:A<B
+  localparam  NOT  = 13; //! !A
 
   ula # (
         .DATA_SIZE(DATA_SIZE)
@@ -79,19 +79,19 @@ module ula_test;
     operand_a = 'h55;
     operand_b = 'haa;
     #1;
-    expect(1);
+    expect(0);
 
     opcode = NAND;
     operand_a = 'h55;
     operand_b = 'haa;
     #1;
-    expect(0);
+    expect(1);
 
     opcode = OR;
     operand_a = 'h55;
     operand_b = 'haa;
     #1;
-    expect(1);
+    expect('hff);
 
     opcode = XOR;
     operand_a = 'h55;

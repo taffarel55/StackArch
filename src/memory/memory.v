@@ -6,7 +6,7 @@
 //! Este módulo Verilog representa uma memória de programa parametrizável.
 
 module memory #(
-    parameter integer AWIDTH = 15,  //! Largura do endereço da memória
+    parameter integer AWIDTH = 5,  //! Largura do endereço da memória
     parameter integer DWIDTH = 32,  //! Largura dos dados armazenados
     parameter INIT_MEMORY=""
   )(
@@ -31,6 +31,7 @@ module memory #(
       rdata = memory[addr];
   end
 
+  `ifndef SYNTHESIS
   initial
   begin
     if (INIT_MEMORY)
@@ -39,4 +40,7 @@ module memory #(
       $readmemb(INIT_MEMORY, memory);
     end
   end
+  `endif
+
+
 endmodule

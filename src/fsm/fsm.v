@@ -6,21 +6,18 @@ module fsm #(
     input wire [4:0] instruction,
     input wire [10:0] operand,
 
-    output reg [15:0] stack_data,
+    input wire [15:0] stack_data_out,
+    output reg [15:0] stack_data_in,
 
-    // Temp regs
-    output reg rst_temp1,
-    output reg rst_temp2,
-    output reg rd_temp1,
-    output reg rd_temp2,
-    output reg wr_temp1,
-    output reg wr_temp2,
+    // ULA
+    input [15:0] out_ula,
+    output reg [15:0] temp1,
+    output reg [15:0] temp2,
 
     // IR register
     output reg rd_ir,
     output reg wr_ir,
     output reg rst_ir,
-
 
     output reg rst_tos,
 
@@ -29,7 +26,7 @@ module fsm #(
 
     // Program memory
     output reg rd_mem,
-    output reg wr_mem, // <-- Precisa escrever na memória
+    output reg wr_mem,
 
     // Data memory
     output reg rd_memd,
@@ -55,10 +52,7 @@ module fsm #(
     // Pointer to data stack
     output reg [DEPTH_TOS_POINTER - 1:0] tos_pointer
   );
-  // TODO: Verificar a necessidade de rst_stack e rst_tos
 
-
-  // TODO: Concat + colocar isso como config global
   localparam RESET_ALL  = 0;
   localparam GET_INSTR  = 1;
   localparam SAVE_INSTR = 2;
@@ -81,8 +75,9 @@ module fsm #(
   localparam PREP_IMM   = 19;
   localparam INC_STACK  = 20;
   localparam DEC_STACK  = 21;
+  localparam DEC_STACK_AGAIN = 22;
+  localparam GET_ULA    = 23;
 
-  // TODO: Concat + colocar isso como config global
   localparam PUSH = 0;
   localparam PUSH_I = 1;
   localparam PUSH_T = 2;
@@ -106,8 +101,12 @@ module fsm #(
   localparam CALL = 20;
   localparam RET = 21;
 
-  reg [5:0] state, next_state; // Mudar para parametros
 
+  wire isULA, isJUMP;
+  assign isULA = instruction>=ADD && instruction<=NOT;
+  assign isJUMP = instruction>=IF_EQ && instruction<=IF_LE;
+
+  reg [5:0] state, next_state;
   reg [15:0] data_to_stack;
 
 
@@ -119,10 +118,7 @@ module fsm #(
       state <= next_state;
   end
 
-  // TODO: Juntar cases, se tiver como
-  // TODO: Colocar full case em case(instruction)
-  // TODO: Mudar instruction_register[15:10] para uma variavel que represente a fatia da instrução
-  always @(*)
+  always @*
   begin
     case (state)
       RESET_ALL:
@@ -155,9 +151,9 @@ module fsm #(
         endcase
       end
       SET_A:
-        next_state = instruction == POP ? DEC_STACK : SAVE_A;
+        next_state = DEC_STACK;
       DEC_STACK:
-        next_state = WRITE_MEMD;
+        next_state = instruction == POP ? WRITE_MEMD : SAVE_A;
       SAVE_A:
       case(instruction)
         NOT:
@@ -168,18 +164,22 @@ module fsm #(
           next_state = SET_B;
       endcase
       SET_B:
+        next_state = DEC_STACK_AGAIN;
+      DEC_STACK_AGAIN:
         next_state = SAVE_B;
       SAVE_B:
         next_state = VERIFY;
       VERIFY:
-      case (instruction)
-        ADD,NOT: // ULA
-          next_state = PUSH_STACK;
-        IF_EQ,IF_LE: // Jumps
+      case (1)
+        isULA:
+          next_state = GET_ULA;
+        isJUMP:
           next_state = JUMP;
         default:
           next_state = FINISH;
       endcase
+      GET_ULA:
+        next_state <= PUSH_STACK;
       PREP_IMM:
         next_state = PUSH_STACK;
       PUSH_STACK:
@@ -209,16 +209,8 @@ module fsm #(
     endcase
   end
 
-  always @(*)
+  always @*
   begin
-    // Temp regs
-    rst_temp1 = 0;
-    rst_temp2 = 0;
-    rd_temp1 = 0;
-    rd_temp2 = 0;
-    wr_temp1 = 0;
-    wr_temp2 = 0;
-
     // IR register
     rd_ir = 0;
     wr_ir = 0;
@@ -256,9 +248,9 @@ module fsm #(
         rst_ip      = 1;
         rst_ir      = 1;
         rst_rtn     = 1;
-        rst_temp1   = 1;
-        rst_temp2   = 1;
         rst_stack   = 1;
+        temp1 = 0;
+        temp2 = 0;
 
         tos_pointer = 0;
       end
@@ -291,7 +283,7 @@ module fsm #(
 
       SAVE_A:
       begin
-        wr_temp1 = 1;
+        temp1 = stack_data_out;
       end
 
       SET_B:
@@ -299,9 +291,14 @@ module fsm #(
         pop_stack = 1;
       end
 
+      DEC_STACK_AGAIN:
+      begin
+        tos_pointer = tos_pointer - 1;
+      end
+
       SAVE_B:
       begin
-        wr_temp2 = 1;
+        temp2 = stack_data_out;
       end
 
       VERIFY:
@@ -309,12 +306,16 @@ module fsm #(
 
       end
 
+      GET_ULA:
+      begin
+        data_to_stack = out_ula;
+      end
+
       PUSH_STACK:
       begin
         // TODO: tá cheio??
-        stack_data = data_to_stack;
+        stack_data_in = data_to_stack;
         push_stack = 1;
-        //TODO: tá passando aqui 2x no PUSH (pq??)
       end
 
       JUMP:
@@ -335,7 +336,7 @@ module fsm #(
 
       GET_A:
       begin
-        rd_temp1 = 1;
+        data_to_stack = temp1;
       end
 
       READ_MEMD:

@@ -1,7 +1,10 @@
-`include "src/memory/memory.v"
-`include "src/fsm/fsm.v"
-`include "src/register/register.v"
-`include "src/stack/stack.v"
+`ifndef SYNTHESIS
+  `include "src/memory/memory.v"
+  `include "src/fsm/fsm.v"
+  `include "src/register/register.v"
+  `include "src/stack/stack.v"
+  `include "src/ula/ula.v"
+`endif
 
 module cpu #(
     parameter PROGRAM_FILE = ""
@@ -17,9 +20,9 @@ module cpu #(
   assign operand = instr[10:0];
 
   // ---- IP -----
-  wire [9:0] ip;
+  wire [5:0] ip;
   wire rst_ip, inc_ip;
-  register #(.DATA_SIZE(10)) ip_regiser (.clk(clk), .rst(rst_ip), .out(ip), .inc(inc_ip));
+  register #(.DATA_SIZE(6)) ip_regiser (.clk(clk), .rst(rst_ip), .out(ip), .inc(inc_ip));
 
 
   // ---- IR -----
@@ -59,9 +62,13 @@ module cpu #(
          .tos_pointer(tos_pointer),
          .push_stack(push_stack),
          .pop_stack(pop_stack),
-         .stack_data(stack_data_in),
+         .stack_data_in(stack_data_in),
+         .stack_data_out(stack_data_out),
          .instruction(instruction),
-         .operand(operand)
+         .operand(operand),
+         .out_ula(out_ula),
+         .temp1(temp1),
+         .temp2(temp2)
        );
 
   // ---- Program Memory -----
@@ -69,7 +76,7 @@ module cpu #(
   wire wr_mem, rd_mem;
   memory
     #(
-      .AWIDTH (10),
+      .AWIDTH (6),
       .DWIDTH (16),
       .INIT_MEMORY (PROGRAM_FILE)
     )
@@ -86,16 +93,32 @@ module cpu #(
   wire [15:0] data_out_memd;
   memory
     #(
-      .AWIDTH (11),
+      .AWIDTH (7),
       .DWIDTH (16)
     )
     memory_data
     (
       .wr(wr_memd),
       .rd (rd_memd),
-      .addr(operand),
+      .addr(operand[6:0]), // Truncando operando pra facilitar pra síntese
       .data_in(stack_data_out),
       .data_out(data_out_memd)
     );
+
+  // ---- ULA -----
+  wire [15:0] out_ula, temp1, temp2;
+  ula
+    #(
+      .DATA_SIZE(16)
+    )
+    ula_inst
+    (
+      .out(out_ula),
+      .operand_a(temp1),
+      .operand_b(temp2),
+      .opcode(instruction[3:0])
+    );
+
+
 
 endmodule
