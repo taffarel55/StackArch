@@ -2,6 +2,7 @@ build/
 venv/
 *.out
 *.vcd
+!gtkwave/*.vcd
 
 vunit_out/
 sim_build/
