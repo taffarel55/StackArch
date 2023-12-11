@@ -4,7 +4,7 @@
 //-----------------------------------------//
 // DEFINA O PROGRAMA A SER EXECUTADO AQUI: //
 // ----------------------------------------//
-`define PROGRAM_NAME "program_fibonacci_n"
+`define PROGRAM_NAME "program_routines"
 // ------------------------------------------
 
 module cpu_test;
@@ -56,7 +56,7 @@ module cpu_test;
     //------------------------------------------//
     // DEFINA O TESTBENCH A SER EXECUTADO AQUI: //
     // -----------------------------------------//
-    `include "src/testbenchs/program_fibonacci_n.v"
+`include "src/testbenchs/program_routines.v"
     // ------------------------------------------
 
 

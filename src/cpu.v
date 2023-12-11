@@ -1,10 +1,8 @@
-`ifndef SYNTHESIS
-  `include "src/memory/memory.v"
-  `include "src/fsm/fsm.v"
-  `include "src/register/register.v"
-  `include "src/stack/stack.v"
-  `include "src/ula/ula.v"
-`endif
+`include "src/memory/memory.v"
+`include "src/fsm/fsm.v"
+`include "src/register/register.v"
+`include "src/stack/stack.v"
+`include "src/ula/ula.v"
 
 module cpu #(
     parameter PROGRAM_FILE = ""
@@ -45,6 +43,21 @@ module cpu #(
           .data_out(stack_data_out)
         );
 
+  // ----- Routine Stack -----
+  wire push_rtn,pop_rtn,rst_rtn;
+  wire [15:0] rtn_pointer;
+  wire [10:0] out_rtn_stack;
+
+  stack #(.WIDTH(11), .DEPTH(16)) routine_stack (
+          .clk(clk),
+          .rst(rst_rtn),
+          .pointer(rtn_pointer),
+          .push(push_rtn),
+          .pop(pop_rtn),
+          .data_in(ip),
+          .data_out(out_rtn_stack)
+        );
+
   // ---- FSM -----
   fsm  #(DEPTH_TOS_POINTER) controller (
          .clk(clk),
@@ -70,7 +83,12 @@ module cpu #(
          .operand(operand),
          .out_ula(out_ula),
          .temp1(temp1),
-         .temp2(temp2)
+         .temp2(temp2),
+         .push_rtn(push_rtn),
+         .pop_rtn(pop_rtn),
+         .rst_rtn(rst_rtn),
+         .rtn_pointer(rtn_pointer),
+         .out_rtn_stack(out_rtn_stack)
        );
 
   // ---- Program Memory -----

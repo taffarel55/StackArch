@@ -51,7 +51,11 @@ module fsm #(
     output reg rst_rtn,
 
     // Pointer to data stack
-    output reg [DEPTH_TOS_POINTER - 1:0] tos_pointer
+    output reg [DEPTH_TOS_POINTER - 1:0] tos_pointer,
+
+    // Pointer to routine stack
+    input wire [10:0] out_rtn_stack,
+    output reg [15:0] rtn_pointer
   );
 
   localparam RESET_ALL  = 0;
@@ -80,6 +84,8 @@ module fsm #(
   localparam GET_ULA    = 23;
   localparam SET_GOTO   = 24;
   localparam PREP_JUMP  = 25;
+  localparam INC_RTN_STACK = 26;
+  localparam DEC_RTN_STACK = 27;
 
   localparam PUSH = 0;
   localparam PUSH_I = 1;
@@ -202,8 +208,12 @@ module fsm #(
       JUMP:
         next_state = FINISH;
       PUSH_RTN:
+        next_state = INC_RTN_STACK;
+      INC_RTN_STACK:
         next_state = JUMP;
       RET_RTN:
+        next_state = DEC_RTN_STACK;
+      DEC_RTN_STACK:
         next_state = JUMP;
       GET_A:
         next_state = PUSH_STACK;
@@ -268,6 +278,7 @@ module fsm #(
         temp2 = 0;
 
         tos_pointer = 0;
+        rtn_pointer = 0;
       end
 
       GET_INSTR:
@@ -355,9 +366,21 @@ module fsm #(
         rd_ip = 1;
       end
 
+      INC_RTN_STACK:
+      begin
+        addr_to_jump = operand - 1;
+        rtn_pointer = rtn_pointer + 1;
+      end
+
       RET_RTN:
       begin
         pop_rtn = 1;
+      end
+
+      DEC_RTN_STACK:
+      begin
+        addr_to_jump = out_rtn_stack;
+        rtn_pointer = rtn_pointer - 1;
       end
 
       GET_A:

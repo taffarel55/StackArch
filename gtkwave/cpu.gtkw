@@ -1,40 +1,44 @@
 [*]
 [*] GTKWave Analyzer v3.3.117 (w)1999-2023 BSI
-[*] Mon Dec 11 03:42:27 2023
+[*] Mon Dec 11 19:06:57 2023
 [*]
 [dumpfile] "/home/taffarel55/Disciplinas/projeto-circuitos-digitais/StackArch/build/cpu.vcd"
-[dumpfile_mtime] "Mon Dec 11 03:41:16 2023"
-[dumpfile_size] 36120
+[dumpfile_mtime] "Mon Dec 11 18:45:01 2023"
+[dumpfile_size] 14870
 [savefile] "/home/taffarel55/Disciplinas/projeto-circuitos-digitais/StackArch/gtkwave/cpu.gtkw"
-[timestart] 0
+[timestart] 159500
 [size] 1366 689
 [pos] -1 -1
-*-15.900001 184500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-14.400001 180200 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] cpu_test.
 [treeopen] cpu_test.cpu_inst.
 [treeopen] cpu_test.cpu_inst.controller.
 [sst_width] 261
 [signals_width] 239
 [sst_expanded] 1
-[sst_vpaned_height] 263
-@28
-[color] 3
-cpu_test.clk
-@200
--FSM
+[sst_vpaned_height] 279
 @24
 [color] 2
 cpu_test.cpu_inst.controller.state[5:0]
 @420
 [color] 2
 cpu_test.cpu_inst.controller.data_to_stack[15:0]
+@c00420
 cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
 @28
-cpu_test.cpu_inst.controller.instruction[4:0]
-@22
-cpu_test.cpu_inst.controller.operand[10:0]
-@420
-cpu_test.cpu_inst.controller.temp1[15:0]
+(0)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(1)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(2)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(3)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(4)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(5)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(6)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(7)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(8)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(9)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+(10)cpu_test.cpu_inst.controller.actual_addr_inst[10:0]
+@1401200
+-group_end
 @200
 -memory_program
 @22
@@ -47,12 +51,28 @@ cpu_test.cpu_inst.memory_program.data_out[15:0]
 cpu_test.cpu_inst.ip_regiser.out[10:0]
 @200
 -IR_register
-@28
->2300
-[color] 6
+@c00022
 cpu_test.cpu_inst.ir_regiser.out[15:0]
+@28
+(0)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(1)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(2)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(3)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(4)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(5)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(6)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(7)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(8)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(9)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(10)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(11)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(12)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(13)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(14)cpu_test.cpu_inst.ir_regiser.out[15:0]
+(15)cpu_test.cpu_inst.ir_regiser.out[15:0]
+@1401200
+-group_end
 @200
->0
 -memory_data
 @22
 [color] 3
@@ -109,7 +129,14 @@ cpu_test.cpu_inst.ula_inst.operand_a[15:0]
 @22
 [color] 3
 cpu_test.cpu_inst.ula_inst.operand_b[15:0]
+@23
 [color] 3
 cpu_test.cpu_inst.ula_inst.out[15:0]
+@200
+-routine_stack
+@22
+cpu_test.cpu_inst.routine_stack.data_in[10:0]
+cpu_test.cpu_inst.routine_stack.data_out[10:0]
+cpu_test.cpu_inst.routine_stack.pointer[15:0]
 [pattern_trace] 1
 [pattern_trace] 0
