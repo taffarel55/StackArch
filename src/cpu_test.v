@@ -4,7 +4,7 @@
 //-----------------------------------------//
 // DEFINA O PROGRAMA A SER EXECUTADO AQUI: //
 // ----------------------------------------//
-`define PROGRAM_NAME "program_ula"
+`define PROGRAM_NAME "program_fibonacci_n"
 // ------------------------------------------
 
 module cpu_test;
@@ -56,7 +56,7 @@ module cpu_test;
     //------------------------------------------//
     // DEFINA O TESTBENCH A SER EXECUTADO AQUI: //
     // -----------------------------------------//
-`include "src/testbenchs/program_ula.v"
+    `include "src/testbenchs/program_fibonacci_n.v"
     // ------------------------------------------
 
 

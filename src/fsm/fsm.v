@@ -38,6 +38,7 @@ module fsm #(
     output reg rd_ip,
     output reg rst_ip,
     output reg inc_ip,
+    output reg [10:0] actual_addr_inst,
 
     // Data stack
     output reg push_stack,
@@ -77,6 +78,8 @@ module fsm #(
   localparam DEC_STACK  = 21;
   localparam DEC_STACK_AGAIN = 22;
   localparam GET_ULA    = 23;
+  localparam SET_GOTO   = 24;
+  localparam PREP_JUMP  = 25;
 
   localparam PUSH = 0;
   localparam PUSH_I = 1;
@@ -108,7 +111,7 @@ module fsm #(
 
   reg [5:0] state, next_state;
   reg [15:0] data_to_stack;
-
+  reg [10:0] addr_to_jump;
 
   always @(posedge clk, posedge rst)
   begin : RESET_FSM
@@ -141,7 +144,7 @@ module fsm #(
           IF_GT, IF_LT, IF_GE, IF_LE:
             next_state = SET_A;
           GOTO:
-            next_state = JUMP;
+            next_state = SET_GOTO;
           CALL:
             next_state = PUSH_RTN;
           RET:
@@ -155,14 +158,12 @@ module fsm #(
       DEC_STACK:
         next_state = instruction == POP ? WRITE_MEMD : SAVE_A;
       SAVE_A:
-      case(instruction)
-        NOT:
+      begin
+        if(instruction == NOT || isJUMP)
           next_state = VERIFY;
-        IF_EQ,IF_LE: // Jumps
-          next_state = VERIFY;
-        default:
+        else
           next_state = SET_B;
-      endcase
+      end
       SET_B:
         next_state = DEC_STACK_AGAIN;
       DEC_STACK_AGAIN:
@@ -173,17 +174,31 @@ module fsm #(
       case (1)
         isULA:
           next_state = GET_ULA;
-        isJUMP:
-          next_state = JUMP;
+        isJUMP && (
+          temp1 == 0 && instruction == IF_EQ ||
+          temp1 >  0 && instruction == IF_GT ||
+          temp1 <  0 && instruction == IF_LT ||
+          temp1 == 0 && instruction == IF_EQ ||
+          temp1[15] == 0 && instruction == IF_GE ||
+          temp1[15] != 0 && instruction == IF_LE
+        ):
+        begin
+          $display("%d Entrei aqui, %d, %d", $time, temp1 >= 0, temp1);
+          next_state = PREP_JUMP;
+        end
         default:
           next_state = FINISH;
       endcase
+      PREP_JUMP:
+        next_state = JUMP;
       GET_ULA:
         next_state <= PUSH_STACK;
       PREP_IMM:
         next_state = PUSH_STACK;
       PUSH_STACK:
         next_state = INC_STACK;
+      SET_GOTO:
+        next_state = JUMP;
       JUMP:
         next_state = FINISH;
       PUSH_RTN:
@@ -318,8 +333,19 @@ module fsm #(
         push_stack = 1;
       end
 
+      SET_GOTO:
+      begin
+        addr_to_jump = operand - 1;
+      end
+
+      PREP_JUMP:
+      begin
+        addr_to_jump = operand - 1;
+      end
+
       JUMP:
       begin
+        actual_addr_inst = addr_to_jump;
         wr_ip = 1;
       end
 
@@ -346,7 +372,7 @@ module fsm #(
 
       PREP_IMM:
       begin
-        data_to_stack = operand;
+        data_to_stack = {{5{operand[10]}},operand};
       end
 
       PREP_MEMD:

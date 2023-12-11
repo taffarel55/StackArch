@@ -123,7 +123,7 @@
     </state>
     <state>
       <values>pop_RTN=1</values>
-      <position x="3000.0" y="1020.0"/>
+      <position x="2400.0" y="1080.0"/>
       <number>12</number>
       <name>RET_RTN</name>
       <radius>70</radius>
@@ -241,6 +241,26 @@
       <initialAngle>12</initialAngle>
       <defaultDC>false</defaultDC>
     </state>
+    <state>
+      <values></values>
+      <position x="2640.0" y="780.0"/>
+      <number>24</number>
+      <name>SET_GOTO</name>
+      <radius>70</radius>
+      <isInitial>false</isInitial>
+      <initialAngle>12</initialAngle>
+      <defaultDC>false</defaultDC>
+    </state>
+    <state>
+      <values></values>
+      <position x="3120.0" y="720.0"/>
+      <number>25</number>
+      <name>PREP_JUMP</name>
+      <radius>70</radius>
+      <isInitial>false</isInitial>
+      <initialAngle>12</initialAngle>
+      <defaultDC>false</defaultDC>
+    </state>
   </states>
   <transitions>
     <transition>
@@ -294,20 +314,6 @@
     </transition>
     <transition>
       <values></values>
-      <position x="3070.0" y="770.0"/>
-      <fromState reference="../../../states/state[9]"/>
-      <toState reference="../../../states/state[11]"/>
-      <condition>jump</condition>
-    </transition>
-    <transition>
-      <values></values>
-      <position x="2487.4092" y="766.3262"/>
-      <fromState reference="../../../states/state[4]"/>
-      <toState reference="../../../states/state[11]"/>
-      <condition>goto</condition>
-    </transition>
-    <transition>
-      <values></values>
       <position x="2086.8096" y="604.8928"/>
       <fromState reference="../../../states/state[4]"/>
       <toState reference="../../../states/state[12]"/>
@@ -322,14 +328,14 @@
     </transition>
     <transition>
       <values></values>
-      <position x="2226.5007" y="900.21326"/>
+      <position x="2047.5454" y="689.97577"/>
       <fromState reference="../../../states/state[4]"/>
       <toState reference="../../../states/state[13]"/>
       <condition>ret</condition>
     </transition>
     <transition>
       <values></values>
-      <position x="3163.0994" y="951.83234"/>
+      <position x="2880.6714" y="1075.0173"/>
       <fromState reference="../../../states/state[13]"/>
       <toState reference="../../../states/state[11]"/>
       <condition></condition>
@@ -479,6 +485,34 @@
       <position x="3145.9275" y="-54.814484"/>
       <fromState reference="../../../states/state[24]"/>
       <toState reference="../../../states/state[10]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="2212.2305" y="561.3235"/>
+      <fromState reference="../../../states/state[4]"/>
+      <toState reference="../../../states/state[25]"/>
+      <condition>goto</condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="2966.7788" y="845.4344"/>
+      <fromState reference="../../../states/state[25]"/>
+      <toState reference="../../../states/state[11]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="3079.1538" y="617.23083"/>
+      <fromState reference="../../../states/state[9]"/>
+      <toState reference="../../../states/state[26]"/>
+      <condition>jump</condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="3209.7441" y="780.3837"/>
+      <fromState reference="../../../states/state[26]"/>
+      <toState reference="../../../states/state[11]"/>
       <condition></condition>
     </transition>
   </transitions>

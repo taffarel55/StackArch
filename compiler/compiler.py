@@ -15,6 +15,14 @@ class Compiler:
             'XOR': 11,
             'CMP': 12,
             'NOT': 13,
+            'GOTO': 14,
+            'IF_EQ': 15,
+            'IF_GT': 16,
+            'IF_LT': 17,
+            'IF_GE': 18,
+            'IF_LE': 19,
+            'CALL': 20,
+            'RET': 21
         }
 
         self.reverse_instructions = {v: k for k, v in self.instructions.items()}
@@ -43,9 +51,10 @@ class Compiler:
         with open(file_path, 'r') as file:
             lines = file.readlines()
             lines_not_null = [line for line in lines if line.strip() != '']
+            lines_not_commented = [line for line in lines_not_null if not line.startswith('//')]
 
         machine_code_lines = []
-        for line in lines_not_null:
+        for line in lines_not_commented:
             parts = line.strip().split()
 
             mnemonic = parts[0]

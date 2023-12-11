@@ -20,9 +20,9 @@ module cpu #(
   assign operand = instr[10:0];
 
   // ---- IP -----
-  wire [5:0] ip;
-  wire rst_ip, inc_ip;
-  register #(.DATA_SIZE(6)) ip_regiser (.clk(clk), .rst(rst_ip), .out(ip), .inc(inc_ip));
+  wire [10:0] ip, in_ip;
+  wire rst_ip, inc_ip, wr_ip;
+  register #(.DATA_SIZE(11)) ip_regiser (.clk(clk), .rst(rst_ip), .out(ip), .inc(inc_ip), .load(wr_ip), .in(in_ip));
 
 
   // ---- IR -----
@@ -56,6 +56,8 @@ module cpu #(
          .data_out_memd(data_out_memd),
          .rst_ip(rst_ip),
          .inc_ip(inc_ip),
+         .wr_ip(wr_ip),
+         .actual_addr_inst(in_ip),
          .rst_ir(rst_ir),
          .wr_ir(wr_ir),
          .rst_stack(rst_stack),
@@ -76,7 +78,7 @@ module cpu #(
   wire wr_mem, rd_mem;
   memory
     #(
-      .AWIDTH (6),
+      .AWIDTH (11),
       .DWIDTH (16),
       .INIT_MEMORY (PROGRAM_FILE)
     )
@@ -93,14 +95,14 @@ module cpu #(
   wire [15:0] data_out_memd;
   memory
     #(
-      .AWIDTH (7),
+      .AWIDTH (11),
       .DWIDTH (16)
     )
     memory_data
     (
       .wr(wr_memd),
       .rd (rd_memd),
-      .addr(operand[6:0]), // Truncando operando pra facilitar pra síntese
+      .addr(operand),
       .data_in(stack_data_out),
       .data_out(data_out_memd)
     );
