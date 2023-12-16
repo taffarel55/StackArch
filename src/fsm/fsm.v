@@ -86,6 +86,7 @@ module fsm #(
   localparam PREP_JUMP  = 25;
   localparam INC_RTN_STACK = 26;
   localparam DEC_RTN_STACK = 27;
+  localparam AWAIT_INSTR   = 28;
 
   localparam PUSH = 0;
   localparam PUSH_I = 1;
@@ -133,6 +134,8 @@ module fsm #(
       RESET_ALL:
         next_state = GET_INSTR;
       GET_INSTR:
+        next_state = AWAIT_INSTR;
+      AWAIT_INSTR:
         next_state = SAVE_INSTR;
       SAVE_INSTR:
         next_state = DECODE;
@@ -286,6 +289,11 @@ module fsm #(
         rd_mem = 1;
       end
 
+      AWAIT_INSTR:
+      begin
+        rd_mem = 1;
+      end
+
       SAVE_INSTR:
       begin
         rd_mem = 1;
@@ -339,7 +347,6 @@ module fsm #(
 
       PUSH_STACK:
       begin
-        // TODO: tá cheio??
         stack_data_in = data_to_stack;
         push_stack = 1;
       end

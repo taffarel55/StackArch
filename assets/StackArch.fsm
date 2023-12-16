@@ -3,7 +3,7 @@
   <states>
     <state>
       <values>rst_IP=1, rst_RTN=1, rst_IR=1, rst_1=1, rst_2=1, rst_STK=1, rst_TOS=1, rst_F=1</values>
-      <position x="840.0" y="300.0"/>
+      <position x="720.0" y="300.0"/>
       <number>0</number>
       <name>RESET_ALL</name>
       <radius>380</radius>
@@ -13,7 +13,7 @@
     </state>
     <state>
       <values>rd_MEM=1</values>
-      <position x="1380.0" y="240.0"/>
+      <position x="1260.0" y="300.0"/>
       <number>1</number>
       <name>GET_INSTR</name>
       <radius>90</radius>
@@ -281,20 +281,23 @@
       <initialAngle>12</initialAngle>
       <defaultDC>false</defaultDC>
     </state>
+    <state>
+      <values></values>
+      <position x="1440.0" y="240.0"/>
+      <number>28</number>
+      <name>AWAIT_INSTR</name>
+      <radius>70</radius>
+      <isInitial>false</isInitial>
+      <initialAngle>12</initialAngle>
+      <defaultDC>false</defaultDC>
+    </state>
   </states>
   <transitions>
     <transition>
       <values></values>
-      <position x="1254.0448" y="253.37325"/>
+      <position x="1135.0" y="88.0"/>
       <fromState reference="../../../states/state"/>
       <toState reference="../../../states/state[2]"/>
-      <condition></condition>
-    </transition>
-    <transition>
-      <values></values>
-      <position x="1515.0" y="134.65814"/>
-      <fromState reference="../../../states/state[2]"/>
-      <toState reference="../../../states/state[3]"/>
       <condition></condition>
     </transition>
     <transition>
@@ -397,7 +400,7 @@
     </transition>
     <transition>
       <values></values>
-      <position x="1630.9631" y="1097.5994"/>
+      <position x="1637.0193" y="1102.705"/>
       <fromState reference="../../../states/state[18]"/>
       <toState reference="../../../states/state[2]"/>
       <condition></condition>
@@ -547,6 +550,20 @@
       <position x="2549.942" y="1110.2902"/>
       <fromState reference="../../../states/state[13]"/>
       <toState reference="../../../states/state[28]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="1333.0868" y="187.63773"/>
+      <fromState reference="../../../states/state[2]"/>
+      <toState reference="../../../states/state[29]"/>
+      <condition></condition>
+    </transition>
+    <transition>
+      <values></values>
+      <position x="1535.0" y="136.0"/>
+      <fromState reference="../../../states/state[29]"/>
+      <toState reference="../../../states/state[3]"/>
       <condition></condition>
     </transition>
   </transitions>

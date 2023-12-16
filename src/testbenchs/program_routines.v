@@ -1,4 +1,4 @@
-repeat(5)
+repeat(12)
 begin
   wait(cpu_inst.controller.state == 3);
   $display("Estou na instrução %d", cpu_inst.memory_program.addr);

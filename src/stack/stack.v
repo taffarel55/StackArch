@@ -40,7 +40,7 @@ module stack #(
       begin
         lifo[pointer] <= data_in;
       end
-      else if(pop)
+      else if(pop && !empty)
       begin
         data_out <= lifo[pointer-1];
       end
