@@ -101,7 +101,7 @@ class Compiler:
             #f.write("DEPTH = {};\n".format(len(bin_list)))
             f.write("DEPTH = 2048;\n")
             f.write("WIDTH = 16;\n")
-            f.write("ADDRESS_RADIX = HEX;\n")
+            f.write("ADDRESS_RADIX = DEC;\n")
             f.write("DATA_RADIX = HEX;\n\n")
             f.write("CONTENT\nBEGIN\n")
             for i, binary_number in enumerate(bin_list):
